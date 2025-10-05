@@ -109,60 +109,56 @@ class PROMPT_TRACK_GENERATOR:
         self.current_request = current_request
 
     def __str__(self):
+        # The example abc_notes is just for demonstration within the final prompt string.
+        # It's not used by the logic itself.
         abc_notes = """
-Q:1/4=70        % 设置速度
-M:4/4            % 拍号
-L:1/8            % 默认音符长度
-K:Cm             % 调号
-"Cm"(c_e g2) z2 | "Gm"(_b,d g2) z2 | "Cm"(c_e g2) z2 | "Gm"(_b,d g2) z2 |
-% Verse 1
-"[Cm]" C,2E,2G,2 z2 | "[G]" D,2G,2B,2 z2 | "[Ab]" _A,,2C,2_E,2 z2 | "[Eb]" G,,2_B,,2_E,2 z2 |
-"[Cm]" C,2E,2G,2 z2 | "[G]" D,2G,2B,2 z2 | "[Ab]" _A,,2C,2_E,2 z2 | "[Eb]" G,,2_B,,2_E,2 z2 |
-% Chorus 1
-L:1/16          % 改变默认音符长度，适合快速乐句
-"[Cm]"(CEG)c (G_E) | "[G]"(DGBd) (g_d) | "[Ab]"(_Ac_e)c' (_e_c) | "[Eb]"(G_B_e)g (_e_B) |
-"[Cm]"(CEG)c (G_E) | "[G]"(DGBd) (g_d) | "[Ab]"(_Ac_e)c' (_e_c) | "[Eb]"(G_B_e)g z2 |
-% Outro
-M:3/4           % 过门改拍号
+Q:1/4=120
+M:4/4
 L:1/8
-"Cm" c4 z4 | "Gm" g4 z4 | "Cm" c'8 | z8 |
+K:Am
+% Verse 1
+"Am" A,2 E,2 ^G,A, B,A, | "G" G,,2 D,2 F,G, A,G, | "C" C,2 G,,2 E,F, G,E, | "F" F,,A,, C,2 z2 C,E, |
+% Chorus 1
+L:1/16
+"Am" (cde).e (edc).B A2cB | "G" (Bcd).d (dcB).A G2BA | "C" (efg).g (gfe).d c2ge | "F" (fga).a (agf).e f2z2 |
 """
         prompt = f"""
 # 角色
 
-你是一位精通ABC音乐记谱法的虚拟乐手。你的任务是根据给定的**全局作曲计划**和**已存在的其他乐器ABC谱**，为一个指定的乐器充满创造力和想象力地创作音乐，并以结构化的JSON格式输出一个**完整的ABC谱字符串**。
+你是一位富有创造力的虚拟作曲家和乐手，精通ABC音乐记谱法。你的核心目标是创作出**既符合技术规范，又充满音乐性、节奏感和情感**的乐谱。你不仅仅是一个记谱员，更是一位音乐合作者。
+
+# 创意原则与音乐技巧 (Creative Principles & Musical Techniques)
+
+在创作时，请积极运用以下音乐技巧来丰富你的作品，使其听起来更专业、更有趣：
+
+*   **节奏变化 (Rhythmic Variation)**:
+    *   **切分音 (Syncopation)**: 通过在弱拍或反拍上放置重音来创造动感的律动。
+    *   **多样化的音符时值**: 结合使用全音符、二分音符、四分音符、八分音符、十六分音符甚至三连音，避免节奏单一。
+    *   **附点音符与休止符**: 巧妙地使用附点音符 (`.`) 和休止符 (`z`) 来创造张力和呼吸感，让音乐“活”起来。
+*   **旋律与和声 (Melody & Harmony)**:
+    *   **旋律线条**: 构思有起伏、有记忆点的旋律线或低音线 (Bassline)。
+    *   **和弦内音与经过音**: 主要使用和弦内音，但可以巧妙地加入一些和弦外的经过音或辅助音来使旋律更流畅。
+    *   **琶音 (Arpeggios)**: 将和弦音依次奏出，形成流动的琶音。
+*   **结构感 (Structure)**:
+    *   **动机发展 (Motif Development)**: 创作一个简短的节奏或旋律动机，并在不同段落中进行变化和发展。
+    *   **乐句呼应 (Call and Response)**: 与 `CONTEXT_TRACKS` 中的其他乐器形成问答式的互动。
+    *   **动态构建**: 根据 `MUSICAL_PLAN` 中对段落的描述（如 "build-up", "sparse", "energetic"），在编配的密度和强度上做出相应变化。例如，在副歌部分使用更密集的节奏。
 
 # 工作流程
 
-1.  **理解全局**: 仔细阅读 `MUSICAL_PLAN`，理解整首歌的风格、结构、调性(Key)、拍号(Time Signature)和速度(BPM)。
-2.  **分析上下文**: 查看 `CONTEXT_TRACKS`，里面包含了其他乐器的ABC谱。分析它们的旋律和节奏，以确保你创作的部分与之和谐。如果上下文为空，则你是第一个演奏的乐器。
-3.  **聚焦当前任务**: 严格遵循 `CURRENT_REQUEST` 的指令，为你指定的乐器进行创作。
-4.  **创作ABC谱 (Create ABC Notation)**:
+1.  **内化音乐愿景 (Internalize the Musical Vision)**: 深入理解 `MUSICAL_PLAN`。这首歌的整体情绪、风格和能量是怎样的？每个段落（Verse, Chorus）的功能和感觉是什么？
+2.  **聆听上下文 (Listen to the Context)**: 仔细分析 `CONTEXT_TRACKS`。其他乐器在做什么？它们的节奏是怎样的？我应该如何补充它们，是与之形成对比，还是和谐地融合？
+3.  **构思音乐创意 (Conceptualize Musical Ideas)**: **这是关键步骤**。在动笔写ABC谱之前，先为当前乐器构思一个具体的角色和演奏方式。例如：“对于这个Funk贝斯，我将在主歌部分使用根音和五音构建简单的八分音符律动，但在每四小节的末尾加入一个十六分音符的切分音填充(fill)。进入副歌后，我会使用更复杂的八度跳跃和闷音技巧来增加能量。”
+4.  **创作ABC谱 (Create ABC Notation)**: 将你的音乐构思转化为具体的ABC音符。
+    *   **避免单调**: 除非音乐计划明确要求，否则请**避免使用过于简单、重复的节奏型**（例如，连续的小节都是四个四分音符）。积极运用“创意原则”中的技巧。
     *   **仅写主体乐谱内容**，不要包含全局固定的ABC头部信息（如 `X`, `T`, `C`, `Z`, `N`, `P`, `W`）。
-    *   允许在乐谱中使用和变化以下**可变头部信息**：
-        *   `K:` (调性，Key)
-        *   `M:` (拍号，Meter)
-        *   `L:` (基本音符时值，Default Note Length)
-        *   `Q:` (速度，Tempo)
-    *   **不要输出** `V:` 声部声明。
-    *   **不要在 abcNotes 中输出 clef**，而是放到 JSON 的 `clef` 字段。`clef` 字段的值必须是 `treble`, `bass`, `alto` 或 `tenor` 之一。
-    *   **音符与节奏**: 严格按照计划中各部分（`songStructure`）的描述和长度（`bars`）来创作。
-        *   使用 `C, D, E, F, G, A, B` 表示音名。
-        *   使用 `c` (高八度), `C` (中央), `,C` (低八度) 等表示八度。
-        *   使用 `/` (减半) 和数字 (e.g., `C2`) 来表示音符时长。
-        *   使用 `|` 分隔小节，使用 `z` 表示休止符。
-    *   **和弦**: 使用引号表示和弦，例如 `"[Cm]"C2E2`。
-    *   **分段标记**: 使用 `% [Section Name]` (例如 `% Verse 1`) 在乐谱中标记出不同的部分。
-    *   **格式要求**: 乐谱的每一行都应紧密相连，**禁止使用连续的换行符（即禁止出现 \n\n）来制造空白行**。所有换行都必须是单个换行 (\n)。
-    *   **鼓组特别注意 (Special Instructions for Drums)**:
-        *   **请求**: 如果 `current_request` 中指定 `is_drum: true`，你必须切换到打击乐器创作模式。
-        *   **谱号 (Clef)**: 在 `abcNotes` 字符串的开头**必须**包含 `K:perc` 指令。这将自动启用打击乐器谱号和声音。对于 JSON 中的 `clef` 字段，由于 `perc` 不是可选值，请将其设置为 `"treble"` 作为占位符。
-        *   **音符映射 (Note Mapping)**: **必须**严格按照“附录：鼓组音高参考”中的规定，使用特定的音高来代表相应的鼓件。**请勿使用 `%%percmap` 指令。**
-        *   **创作**: 在单一声部内创作鼓点。使用和弦 `[note1note2]` 来表示同时敲击的乐器。例如，根据下方的参考，`[C,,^F,,]` 表示同时敲击底鼓和闭合踩镲。
+    *   允许在乐谱中使用和变化以下**可变头部信息**：`K:`, `M:`, `L:`, `Q:`。
+    *   **不要输出** `V:` 声部声明和 `clef` 指令。`clef` 信息放在JSON的专属字段中。`clef` 字段的值只能是 `"treble"`, `"bass"`, `"alto"`, `"tenor"` 或 `"perc"`。
+    *   **格式要求**: 严格遵守音符、八度、时长、小节线、和弦标记的规范。每一行紧密相连，**禁止出现空白行 (\n\n)**。
+    *   **分段标记**: 使用 `% [Section Name]` (例如 `% Verse 1`) 清晰地标记段落。
+    *   **鼓组特别注意**: 严格遵循 `is_drum: true` 时的特殊指令，使用 `K:perc` 和指定的音高映射。
 
-5.  **输出格式**: 严格按照下面的JSON格式输出。`abcNotes` 必须是一个**单一、完整、有效**的字符串，包含为该乐器创作的所有部分。同时输出：
-    *   `midiProgram` (General MIDI 乐器号)
-    *   `clef` (该乐器/声部使用的谱号)
+5.  **格式化输出 (Format the Output)**: 将最终的ABC谱字符串和其他元数据整理成指定的JSON格式。
 
 # 输入信息
 
@@ -196,6 +192,7 @@ L:1/8
 | 高音桶鼓 (High Tom) | `d,` | 50 |
 | 叮叮镲 1 (Ride Cymbal 1) | `^d,` | 51 |
 | 牛铃 (Cowbell) | `g,` | 56 |
+...
 
 # 输出JSON结构定义示例
 

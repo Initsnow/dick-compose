@@ -308,6 +308,7 @@ version = "0.1.0"
 source = { editable = "src-tauri" }
 dependencies = [
     { name = "anyio" },
+    { name = "litellm" },
     { name = "pydantic" },
     { name = "pytauri" },
 ]
@@ -315,6 +316,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "anyio", specifier = "==4.*" },
+    { name = "litellm", specifier = ">=1.77.5" },
     { name = "pydantic", specifier = "==2.*" },
     { name = "pytauri", specifier = "==0.8.*" },
 ]
@@ -1891,9 +1893,6 @@ wheels = [
 name = "workspace"
 version = "0.1.0"
 source = { virtual = "." }
-dependencies = [
-    { name = "litellm" },
-]
 
 [package.dev-dependencies]
 dev = [
@@ -1901,7 +1900,6 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "litellm", specifier = ">=1.77.5" }]
 
 [package.metadata.requires-dev]
 dev = [{ name = "deep-compose", editable = "src-tauri" }]

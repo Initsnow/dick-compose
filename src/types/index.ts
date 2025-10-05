@@ -68,6 +68,6 @@ export interface Plan {
 export interface Track {
   instrumentName: string;
   abcNotes: string;
-  clef: "treble" | "bass" | "alto" | "tenor";
+  clef: "treble" | "bass" | "alto" | "tenor" | "perc";
   midiProgram: number;
 }

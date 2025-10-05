@@ -9,7 +9,6 @@ from pytauri import Commands
 from .models import Plan, Track, Instrument
 from .prompt import PROMPT_PLAN, PROMPT_TRACK_GENERATOR
 
-from .models import SongInfo, SongSection
 
 commands: Commands = Commands()
 
@@ -23,9 +22,9 @@ class ApiKey(BaseModel):
 async def validate_api_key(body: ApiKey) -> bool:
     try:
         api_key = body.key
-        os.environ["DEEPSEEK_API_KEY"] = api_key
-        a = litellm.utils.get_valid_models(check_provider_endpoint=True)
-        if len(a) > 0:
+        response =litellm.utils.check_valid_key(model="deepseek/deepseek-chat", api_key=api_key)
+        if response:
+            os.environ["DEEPSEEK_API_KEY"] = api_key
             return True
         return False
     except Exception as e:

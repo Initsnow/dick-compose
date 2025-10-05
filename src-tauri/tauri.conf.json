@@ -8,7 +8,8 @@
     "devUrl": "http://localhost:1420",
     "beforeBuildCommand": "pnpm build",
     "frontendDist": "../dist",
-    "features": ["pytauri/standalone"]
+    "features": ["pytauri/standalone"],
+    "removeUnusedCommands": true
   },
   "app": {
     "windows": [

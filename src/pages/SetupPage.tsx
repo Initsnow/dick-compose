@@ -14,7 +14,7 @@ const SetupPage: React.FC = () => {
 
   const handleValidate = async () => {
     if (!localApiKey) {
-      setError('API Key cannot be empty.');
+      setError('API Key不能为空。');
       return;
     }
     setLoading(true);
@@ -25,10 +25,10 @@ const SetupPage: React.FC = () => {
         setApiKey(localApiKey);
         navigate('/');
       } else {
-        setError('Invalid API Key. Please check and try again.');
+        setError('API Key无效。请检查后重试。');
       }
     } catch (err) {
-      setError('An error occurred while validating the key.');
+      setError('验证密钥时发生错误。');
       console.error(err);
     } finally {
       setLoading(false);
@@ -40,16 +40,16 @@ const SetupPage: React.FC = () => {
       <Box sx={{ mt: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <Box >
           <img 
-            src="../../../src-tauri/icons/icon.png" 
+            src="/icon.png" 
             alt="DeepCompose Logo" 
             style={{ maxHeight: '80px', width: 'auto' }}
           />
         </Box>
         <Typography variant="h4" gutterBottom>
-          API Key Setup
+          API Key设置
         </Typography>
         <Typography variant="body1" color="text.secondary" align="center" sx={{ mb: 4 }}>
-          Please enter your DeepSeek API Key to continue.
+          请输入您的DeepSeek API Key以继续。
         </Typography>
         <TextField
           label="API Key"
@@ -69,7 +69,7 @@ const SetupPage: React.FC = () => {
           fullWidth
           size="large"
         >
-          {loading ? <CircularProgress size={24} /> : 'Validate and Continue'}
+          {loading ? <CircularProgress size={24} /> : '验证并继续'}
         </Button>
       </Box>
     </Container>

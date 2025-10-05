@@ -59,5 +59,5 @@ class Track(BaseModel):
     """
     instrumentName: str
     midiProgram: int
-    clef: Literal["treble", "bass", "alto", "tenor"]
+    clef: Literal["treble", "bass", "alto", "tenor","perc"]
     abcNotes: str
